@@ -4,7 +4,19 @@ defmodule Explorer.Chain.Transaction do
   use Explorer.Schema
 
   alias Ecto.Changeset
-  alias Explorer.Chain.{Address, Block, Data, Gas, Hash, InternalTransaction, Log, Wei}
+
+  alias Explorer.Chain.{
+    Address,
+    Block,
+    Data,
+    Gas,
+    Hash,
+    InternalTransaction,
+    Log,
+    Wei,
+    TokenTransfer
+  }
+
   alias Explorer.Chain.Transaction.Status
 
   @optional_attrs ~w(block_hash block_number cumulative_gas_used from_address_hash gas_used index
@@ -137,6 +149,7 @@ defmodule Explorer.Chain.Transaction do
 
     has_many(:internal_transactions, InternalTransaction, foreign_key: :transaction_hash)
     has_many(:logs, Log, foreign_key: :transaction_hash)
+    has_many(:token_transfers, TokenTransfer, foreign_key: :transaction_hash)
 
     belongs_to(
       :to_address,

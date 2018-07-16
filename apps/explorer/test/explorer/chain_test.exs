@@ -68,7 +68,12 @@ defmodule Explorer.ChainTest do
 
     test "with from transactions" do
       address = insert(:address)
-      transaction = :transaction |> insert(from_address: address) |> with_block()
+
+      transaction =
+        :transaction
+        |> insert(from_address: address)
+        |> with_block()
+        |> Repo.preload(:token_transfers)
 
       assert [transaction] ==
                Chain.address_to_transactions(address, direction: :from)
@@ -77,7 +82,12 @@ defmodule Explorer.ChainTest do
 
     test "with to transactions" do
       address = insert(:address)
-      transaction = :transaction |> insert(to_address: address) |> with_block()
+
+      transaction =
+        :transaction
+        |> insert(to_address: address)
+        |> with_block()
+        |> Repo.preload(:token_transfers)
 
       assert [transaction] ==
                Chain.address_to_transactions(address, direction: :to)
@@ -86,8 +96,12 @@ defmodule Explorer.ChainTest do
 
     test "with to and from transactions and direction: :from" do
       address = insert(:address)
-      transaction = :transaction |> insert(from_address: address) |> with_block()
-      :transaction |> insert(to_address: address) |> with_block()
+
+      transaction =
+        :transaction
+        |> insert(from_address: address)
+        |> with_block()
+        |> Repo.preload(:token_transfers)
 
       # only contains "from" transaction
       assert [transaction] ==
@@ -97,10 +111,13 @@ defmodule Explorer.ChainTest do
 
     test "with to and from transactions and direction: :to" do
       address = insert(:address)
-      transaction = :transaction |> insert(to_address: address) |> with_block()
-      :transaction |> insert(from_address: address) |> with_block()
 
-      # only contains "to" transaction
+      transaction =
+        :transaction
+        |> insert(to_address: address)
+        |> with_block()
+        |> Repo.preload(:token_transfers)
+
       assert [transaction] ==
                Chain.address_to_transactions(address, direction: :to)
                |> Repo.preload([:block, :to_address, :from_address])
@@ -109,11 +126,22 @@ defmodule Explorer.ChainTest do
     test "with to and from transactions and no :direction option" do
       address = insert(:address)
       block = insert(:block)
-      transaction1 = :transaction |> insert(to_address: address) |> with_block(block)
-      transaction2 = :transaction |> insert(from_address: address) |> with_block(block)
+
+      transaction1 =
+        :transaction
+        |> insert(to_address: address)
+        |> with_block(block)
+        |> Repo.preload(:token_transfers)
+
+      transaction2 =
+        :transaction
+        |> insert(from_address: address)
+        |> with_block(block)
+        |> Repo.preload(:token_transfers)
 
       assert [transaction2, transaction1] ==
-               Chain.address_to_transactions(address) |> Repo.preload([:block, :to_address, :from_address])
+               Chain.address_to_transactions(address)
+               |> Repo.preload([:block, :to_address, :from_address])
     end
 
     test "does not include non-contract-creation parent transactions" do

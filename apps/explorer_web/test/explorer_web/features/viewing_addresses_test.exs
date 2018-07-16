@@ -243,7 +243,7 @@ defmodule ExplorerWeb.ViewingAddressesTest do
       :transaction
       |> insert(from_address: addresses.lincoln)
       |> with_block()
-      |> Repo.preload([:block, :from_address, :to_address])
+      |> Repo.preload([:block, :from_address, :to_address, :token_transfers])
 
     ExplorerWeb.Endpoint.broadcast!("addresses:#{addresses.lincoln.hash}", "transaction", %{
       address: addresses.lincoln,

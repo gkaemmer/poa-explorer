@@ -91,7 +91,7 @@ defmodule ExplorerWeb.PendingTransactionControllerTest do
     end
 
     test "next_page_params are empty if on last page", %{conn: conn} do
-      insert(:transaction)
+      insert(:transaction) |> Explorer.Repo.preload(:token_transfers)
 
       conn = get(conn, pending_transaction_path(ExplorerWeb.Endpoint, :index, :en))
 

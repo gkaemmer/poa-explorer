@@ -2284,6 +2284,7 @@ defmodule Explorer.Chain do
     })
     |> order_by([transaction], desc: transaction.block_number, desc: transaction.index)
     |> handle_paging_options(paging_options)
+    |> preload(token_transfers: :token)
   end
 
   defp for_parent_transaction(query, %Hash{byte_count: unquote(Hash.Full.byte_count())} = hash) do
@@ -2725,7 +2726,16 @@ defmodule Explorer.Chain do
             LIMIT 1)
           ],
              t.hash
-           ))
+           )) or
+        ^address_hash.bytes in fragment(
+          ~s[
+              (SELECT tt."to_address_hash"
+              FROM "token_transfers" AS tt
+              WHERE (tt."transaction_hash" = ?)
+              LIMIT 1)
+             ],
+          t.hash
+        )
     )
   end
 

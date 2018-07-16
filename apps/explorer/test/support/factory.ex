@@ -15,7 +15,9 @@ defmodule Explorer.Factory do
     Hash,
     InternalTransaction,
     Log,
-    Transaction
+    Transaction,
+    Token,
+    TokenTransfer
   }
 
   alias Explorer.Market.MarketHistory
@@ -200,6 +202,28 @@ defmodule Explorer.Factory do
       # transaction
       type: :create,
       value: sequence("internal_transaction_value", &Decimal.new(&1))
+    }
+  end
+
+  def token_transfer_factory do
+    %TokenTransfer{
+      amount: 1_000_000,
+      from_address: build(:address),
+      to_address: build(:address),
+      transaction: build(:transaction),
+      log: build(:log),
+      token: build(:token)
+    }
+  end
+
+  def token_factory do
+    %Token{
+      name: "test_token",
+      symbol: "some-symbol",
+      total_supply: 999_999_999,
+      decimals: 18,
+      owner_address: build(:address),
+      contract_address: build(:address, contract_code: data(:address_contract_code))
     }
   end
 
