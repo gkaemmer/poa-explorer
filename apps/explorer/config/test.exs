@@ -18,3 +18,9 @@ config :explorer, Explorer.ExchangeRates, enabled: false
 config :explorer, Explorer.Indexer.Supervisor, enabled: false
 
 config :explorer, Explorer.Market.History.Cataloger, enabled: false
+
+variant = System.get_env("ETHEREUM_JSONRPC_VARIANT") || "parity"
+
+# Import variant specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "test/#{variant}.exs"

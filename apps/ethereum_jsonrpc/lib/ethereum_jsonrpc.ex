@@ -109,10 +109,14 @@ defmodule EthereumJSONRPC do
       }
     ]}
   """
-  def execute_contract_functions(functions) do
+  @spec execute_contract_functions(
+          [%{contract_address: String.t(), data: String.t(), id: String.t()}],
+          json_rpc_named_arguments
+        ) :: {:ok, []}
+  def execute_contract_functions(functions, json_rpc_named_arguments) do
     functions
     |> Enum.map(&build_eth_call_payload/1)
-    |> json_rpc(config(:url))
+    |> json_rpc(json_rpc_named_arguments)
   end
 
   defp build_eth_call_payload(%{contract_address: address, data: data, id: id}) do
@@ -277,9 +281,9 @@ defmodule EthereumJSONRPC do
   @doc """
   A request payload for a JSONRPC.
   """
-  @spec request(%{id: non_neg_integer(), method: String.t(), params: list()}) :: Transport.request()
-  def request(%{id: id, method: method, params: params} = map)
-      when is_integer(id) and is_binary(method) and is_list(params) do
+  @spec request(%{method: String.t(), params: list()}) :: Transport.request()
+  def request(%{method: method, params: params} = map)
+      when is_binary(method) and is_list(params) do
     Map.put(map, :jsonrpc, "2.0")
   end
 
