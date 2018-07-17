@@ -157,7 +157,7 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: lib/explorer_web/views/transaction_view.ex:70
+#: lib/explorer_web/views/transaction_view.ex:74
 msgid "Success"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 #: lib/explorer_web/templates/transaction/index.html.eex:14
 #: lib/explorer_web/templates/transaction/overview.html.eex:57
 #: lib/explorer_web/views/transaction_view.ex:38
-#: lib/explorer_web/views/transaction_view.ex:69
+#: lib/explorer_web/views/transaction_view.ex:73
 msgid "Pending"
 msgstr ""
 
@@ -272,11 +272,11 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
-#: lib/explorer_web/views/transaction_view.ex:67
+#: lib/explorer_web/views/transaction_view.ex:71
 msgid "Failed"
 msgstr ""
 
-#: lib/explorer_web/views/transaction_view.ex:68
+#: lib/explorer_web/views/transaction_view.ex:72
 msgid "Out of Gas"
 msgstr ""
 
@@ -439,7 +439,7 @@ msgid "Total Gas Used"
 msgstr ""
 
 #: lib/explorer_web/templates/block_transaction/index.html.eex:22
-#: lib/explorer_web/views/transaction_view.ex:113
+#: lib/explorer_web/views/transaction_view.ex:119
 msgid "Transaction"
 msgstr ""
 
@@ -519,7 +519,7 @@ msgstr ""
 #, elixir-format
 #: lib/explorer_web/templates/transaction/overview.html.eex:109
 #: lib/explorer_web/templates/transaction_internal_transaction/index.html.eex:47
-#: lib/explorer_web/views/transaction_view.ex:111
+#: lib/explorer_web/views/transaction_view.ex:117
 msgid "Contract Creation"
 msgstr ""
 
@@ -630,7 +630,7 @@ msgid "Contract Address Pending"
 msgstr ""
 
 #, elixir-format
-#: lib/explorer_web/views/transaction_view.ex:112
+#: lib/explorer_web/views/transaction_view.ex:118
 msgid "Contract Call"
 msgstr ""
 
@@ -663,4 +663,14 @@ msgstr ""
 #: lib/explorer_web/templates/address_internal_transaction/_internal_transaction.html.eex:22
 #: lib/explorer_web/templates/address_transaction/_transaction.html.eex:29
 msgid "OUT"
+msgstr ""
+
+#, elixir-format
+#: lib/explorer_web/templates/address_transaction/_transaction.html.eex:51
+msgid "Transfers"
+msgstr ""
+
+#, elixir-format
+#: lib/explorer_web/views/transaction_view.ex:116
+msgid "Token Transfer"
 msgstr ""

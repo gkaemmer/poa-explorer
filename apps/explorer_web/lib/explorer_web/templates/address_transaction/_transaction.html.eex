@@ -48,7 +48,7 @@
 
     <%= for token_transfer <- @transaction.token_transfers do %>
       <div class="offset-md-2 col-md-7 col-lg-8 d-flex flex-column">
-        <h2 class="tile-title mt-4">Transfers</h2>
+        <p class="tile-title mt-4"><%= gettext "Transfers" %></p>
 
         <%= render(
               address_template(@address, token_transfer),
