@@ -11,7 +11,7 @@ defmodule Indexer.BlockFetcherTest do
   alias Explorer.Chain.{Address, Block, Log, Transaction, Wei}
 
   alias Indexer.{
-    AddressBalanceFetcher,
+    BalanceFetcher,
     AddressBalanceFetcherCase,
     BlockFetcher,
     BufferedTask,
@@ -268,7 +268,7 @@ defmodule Indexer.BlockFetcherTest do
       InternalTransactionFetcherCase.start_supervised!(json_rpc_named_arguments: json_rpc_named_arguments)
 
       wait_for_tasks(InternalTransactionFetcher)
-      wait_for_tasks(AddressBalanceFetcher)
+      wait_for_tasks(BalanceFetcher)
 
       refute capture_log_at_level(:debug, fn ->
                Indexer.disable_debug_logs()
@@ -283,7 +283,7 @@ defmodule Indexer.BlockFetcherTest do
       InternalTransactionFetcherCase.start_supervised!(json_rpc_named_arguments: json_rpc_named_arguments)
 
       wait_for_tasks(InternalTransactionFetcher)
-      wait_for_tasks(AddressBalanceFetcher)
+      wait_for_tasks(BalanceFetcher)
 
       log =
         capture_log_at_level(:debug, fn ->
@@ -475,7 +475,7 @@ defmodule Indexer.BlockFetcherTest do
                   }} = result
 
           wait_for_tasks(InternalTransactionFetcher)
-          wait_for_tasks(AddressBalanceFetcher)
+          wait_for_tasks(BalanceFetcher)
 
           assert Repo.aggregate(Block, :count, :hash) == 1
           assert Repo.aggregate(Address, :count, :hash) == 1
@@ -727,7 +727,7 @@ defmodule Indexer.BlockFetcherTest do
                   }} = BlockFetcher.import_range(block_number..block_number, state, sequence)
 
           wait_for_tasks(InternalTransactionFetcher)
-          wait_for_tasks(AddressBalanceFetcher)
+          wait_for_tasks(BalanceFetcher)
 
           assert Repo.aggregate(Block, :count, :hash) == 1
           assert Repo.aggregate(Address, :count, :hash) == 5
@@ -806,7 +806,7 @@ defmodule Indexer.BlockFetcherTest do
                   }} = BlockFetcher.import_range(block_number..block_number, state, sequence)
 
           wait_for_tasks(InternalTransactionFetcher)
-          wait_for_tasks(AddressBalanceFetcher)
+          wait_for_tasks(BalanceFetcher)
 
           assert Repo.aggregate(Block, :count, :hash) == 1
           assert Repo.aggregate(Address, :count, :hash) == 2

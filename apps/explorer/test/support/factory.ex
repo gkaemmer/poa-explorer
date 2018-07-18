@@ -10,6 +10,7 @@ defmodule Explorer.Factory do
 
   alias Explorer.Chain.{
     Address,
+    Balance,
     Block,
     Data,
     Hash,
@@ -26,6 +27,14 @@ defmodule Explorer.Factory do
   def address_factory do
     %Address{
       hash: address_hash()
+    }
+  end
+
+  def balance_factory do
+    %Balance{
+      address_hash: address_hash(),
+      block_number: block_number(),
+      value: Enum.random(1..100_000)
     }
   end
 
@@ -72,7 +81,7 @@ defmodule Explorer.Factory do
 
   def block_factory do
     %Block{
-      number: sequence("block_number", & &1),
+      number: block_number(),
       hash: block_hash(),
       parent_hash: block_hash(),
       nonce: sequence("block_nonce", & &1),
@@ -93,6 +102,10 @@ defmodule Explorer.Factory do
       |> Hash.Full.cast()
 
     block_hash
+  end
+
+  def block_number do
+    sequence("block_number", & &1)
   end
 
   def with_block(%Transaction{index: nil} = transaction) do
