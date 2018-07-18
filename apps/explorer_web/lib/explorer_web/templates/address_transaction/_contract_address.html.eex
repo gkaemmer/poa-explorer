@@ -7,7 +7,6 @@
         locale: @locale
       ) %>
   &rarr;
-
   <%= render(
         ExplorerWeb.AddressView,
         "_link.html",

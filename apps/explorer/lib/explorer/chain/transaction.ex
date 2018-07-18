@@ -339,4 +339,20 @@ defmodule Explorer.Chain.Transaction do
       _ -> changeset
     end
   end
+
+  defmacro exists_token_transfer_with_matching_address_hash_fragment(transaction_hash, bytes) do
+    quote do
+      fragment(
+        """
+        EXISTS (
+          SELECT 1
+          FROM "token_transfers" AS tt
+          WHERE tt."transaction_hash" = ? AND tt."to_address_hash" = ?
+        )
+        """,
+        unquote(transaction_hash),
+        unquote(bytes)
+      )
+    end
+  end
 end
