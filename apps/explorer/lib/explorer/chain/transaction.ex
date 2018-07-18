@@ -340,19 +340,54 @@ defmodule Explorer.Chain.Transaction do
     end
   end
 
-  defmacro exists_token_transfer_with_matching_address_hash_fragment(transaction_hash, bytes) do
+  defmacrop exists_token_transfer_with_matching_address_hash_fragment(transaction_hash, bytes) do
     quote do
       fragment(
-        """
-        EXISTS (
+        ~s[
+          EXISTS (
           SELECT 1
           FROM "token_transfers" AS tt
           WHERE tt."transaction_hash" = ? AND tt."to_address_hash" = ?
-        )
-        """,
+          )
+        ],
         unquote(transaction_hash),
         unquote(bytes)
       )
     end
+  end
+
+  def where_address_fields_match(query, address_hash, :to) do
+    where(query, [t], t.to_address_hash == ^address_hash)
+  end
+
+  def where_address_fields_match(query, address_hash, :from) do
+    where(query, [t], t.from_address_hash == ^address_hash)
+  end
+
+  def where_address_fields_match(%Ecto.Query{from: {_table, InternalTransaction}} = query, address_hash, nil) do
+    where(
+      query,
+      [it],
+      it.to_address_hash == ^address_hash or it.from_address_hash == ^address_hash or
+        it.created_contract_address_hash == ^address_hash
+    )
+  end
+
+  def where_address_fields_match(%Ecto.Query{from: {_table, __MODULE__}} = query, address_hash, nil) do
+    where(
+      query,
+      [t],
+      t.to_address_hash == ^address_hash or t.from_address_hash == ^address_hash or
+        (is_nil(t.to_address_hash) and
+           ^address_hash.bytes in fragment(
+             ~s[
+            (SELECT i."created_contract_address_hash"
+            FROM "internal_transactions" AS i
+            WHERE (i."transaction_hash" = ?) AND (i."type" = 'create')
+            LIMIT 1)
+          ],
+             t.hash
+           )) or exists_token_transfer_with_matching_address_hash_fragment(t.hash, ^address_hash.bytes)
+    )
   end
 end

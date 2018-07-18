@@ -16,9 +16,6 @@ defmodule Explorer.Chain do
       where: 3
     ]
 
-  import Explorer.Chain.Transaction,
-    only: [exists_token_transfer_with_matching_address_hash_fragment: 2]
-
   alias Ecto.Adapters.SQL
   alias Ecto.{Changeset, Multi}
 
@@ -120,7 +117,7 @@ defmodule Explorer.Chain do
       transaction in assoc(internal_transaction, :transaction)
     )
     |> join(:left, [internal_transaction, transaction], block in assoc(transaction, :block))
-    |> where_address_fields_match(hash, direction)
+    |> Transaction.where_address_fields_match(hash, direction)
     |> where_transaction_has_multiple_internal_transactions()
     |> page_internal_transaction(paging_options)
     |> limit(^paging_options.page_size)
@@ -191,7 +188,7 @@ defmodule Explorer.Chain do
     |> Keyword.get(:paging_options, @default_paging_options)
     |> fetch_transactions()
     |> preload(token_transfers: :token)
-    |> where_address_fields_match(address_hash, direction)
+    |> Transaction.where_address_fields_match(address_hash, direction)
     |> join_associations(necessity_by_association)
     |> Repo.all()
   end
@@ -2696,41 +2693,6 @@ defmodule Explorer.Chain do
   defp timestamps do
     now = DateTime.utc_now()
     %{inserted_at: now, updated_at: now}
-  end
-
-  defp where_address_fields_match(query, address_hash, :to) do
-    where(query, [t], t.to_address_hash == ^address_hash)
-  end
-
-  defp where_address_fields_match(query, address_hash, :from) do
-    where(query, [t], t.from_address_hash == ^address_hash)
-  end
-
-  defp where_address_fields_match(%Ecto.Query{from: {_table, InternalTransaction}} = query, address_hash, nil) do
-    where(
-      query,
-      [it],
-      it.to_address_hash == ^address_hash or it.from_address_hash == ^address_hash or
-        it.created_contract_address_hash == ^address_hash
-    )
-  end
-
-  defp where_address_fields_match(%Ecto.Query{from: {_table, Transaction}} = query, address_hash, nil) do
-    where(
-      query,
-      [t],
-      t.to_address_hash == ^address_hash or t.from_address_hash == ^address_hash or
-        (is_nil(t.to_address_hash) and
-           ^address_hash.bytes in fragment(
-             ~s[
-            (SELECT i."created_contract_address_hash"
-            FROM "internal_transactions" AS i
-            WHERE (i."transaction_hash" = ?) AND (i."type" = 'create')
-            LIMIT 1)
-          ],
-             t.hash
-           )) or exists_token_transfer_with_matching_address_hash_fragment(t.hash, ^address_hash.bytes)
-    )
   end
 
   defp where_transaction_has_multiple_internal_transactions(query) do
